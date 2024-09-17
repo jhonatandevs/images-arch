@@ -1,9 +1,9 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { ImageProps } from '../../lib/domain/Photo';
+import { Photo } from '../../lib/domain/Photo';
 
 interface PhotosState{
-  favorites: { [key: string]: ImageProps },
+  favorites: { [key: string]: Photo },
 }
 const initialState:PhotosState = {
   favorites: {},
@@ -13,11 +13,11 @@ const PhotoSlice = createSlice({
   name: 'photos',
   initialState,
   reducers: {
-    setFavoritePhotos( state, action: PayloadAction<{ [key: string]: ImageProps }> ) {
+    setFavoritePhotos( state, action: PayloadAction<{ [key: string]: Photo }> ) {
       state.favorites = action.payload;
     },
 
-    toggleFavorite( state, action: PayloadAction<ImageProps> ) {
+    toggleFavorite( state, action: PayloadAction<Photo> ) {
 
       const photo = action.payload;
       const { id } = photo;

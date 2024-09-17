@@ -46,11 +46,16 @@ const Card = (props: any) => {
                         <div onClick={onToggle}
                             className="px-4 py-2 hover:bg-gray-100 flex items-center cursor-pointer">
 
+                           <div className="flex items-center">
+                            <div className="pr-3 ">
+                                {likes_count.toString().padStart(3, '0')}
+                            </div>
                             <div className="text-red-600">
                                 <AiOutlineLike
                                     className={`text-3xl transition-transform fill-red duration-500 ease-in-out hover:scale-150 ${isFavorite ? 'text-red-500 ' : 'text-gray-200'}`}
                                 />
                             </div>
+                           </div>
 
                         </div>
                     </div>

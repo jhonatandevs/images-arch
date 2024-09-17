@@ -1,4 +1,4 @@
-export interface ImageProps {
+export interface Photo {
     type:            string;
     id:              number;
     title:           string;
@@ -22,4 +22,3 @@ export interface ImageProps {
     small: string;
   }
 
-  
