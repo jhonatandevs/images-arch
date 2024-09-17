@@ -1,5 +1,6 @@
+import Card from "../Utils/Card/Card"
 
-import { Card } from '../Utils/Card'
+
 const images=[
     {
       "type": "Image",
@@ -395,11 +396,10 @@ const images=[
 export const ListPhotos = () => {
     
   return (
-    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-5'>
+    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-5 bg-white dark:bg-slate-600'>
         {images.map((image,index)=>{
-            console.log(image)
             return(
-                <Card key={index} {...image}/>
+              <Card key={index} image={image}/>
             )
         })}
     </div>
