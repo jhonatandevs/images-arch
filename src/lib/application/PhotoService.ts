@@ -8,8 +8,8 @@ export const createPhotoService = (repository:PhotoRepository)=>({
         // ensureTaskTitleIsValid(title);
         await repository.like(id)
     },
-    search: async (id: number) => {
+    search: async (text: string) => 
         // ensureTaskIdIsValid(id);
-        await repository.search(id);
-    }
+        await repository.search(text)
+    
 })

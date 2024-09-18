@@ -1,16 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { createPhotoService } from "../../../lib/application/PhotoService";
-import { createFetchPhotoRepository } from "../../../lib/infrastructure/FetchTaskRepository";
 import Card from "../Utils/Card/Card"
 import { Photo } from "../../../lib/domain/Photo";
-import { createLocalStorageTaskRepository } from "../../../lib/infrastructure/LocalStorageTaskRepository";
 import { useAppSelector } from "../../../store";
+import { sharedService } from "../../../lib/shared/sharedService";
 
-// const repository= createFetchPhotoRepository();
-const repository = createFetchPhotoRepository();
-// const repository = createLocalStorageTaskRepository();
 
-const service = createPhotoService(repository);
+
 
 export const ListPhotos = () => {
   const [photos, setPhotos] = useState<Photo[]>([]);
@@ -22,29 +17,42 @@ export const ListPhotos = () => {
   const [page, setPage] = useState(0)
   const fetchTasks = (pageNumber: number) => {
     setLoading(true);
-    service.getAll(pageNumber)
+    sharedService.getAll(pageNumber)
       .then((photosData) => {
         if (photosData.length == 0) setHasMore(false)
         setPhotos((photos) => [...photos, ...photosData])
         setShowPhotos(photos)
+        loadMorePhotos();
+      })
+      .catch((error) => console.error(error)
+      ).finally(() =>
+        setLoading(false))
+  }
+  const fetchUpdate = () => {
+    setLoading(true);
+    sharedService.search(filter)
+      .then((photosData) => {
+        if (photosData.length == 0) setHasMore(false)
+        setShowPhotos(photosData)
+
       })
       .catch((error) => console.error(error)
       ).finally(() =>
         setLoading(false))
   }
   useEffect(() => {
-
   }, [page]);
   useEffect(() => {
-    if (filter.length > 0) return;
-
-    fetchTasks(page);
-
-  }, []);
+    if (filter.length > 0) {
+      fetchUpdate(); // Si hay un filtro, llama a fetchUpdate
+    } else {
+      setShowPhotos(photos); // Si no hay filtro, muestra todas las fotos
+    }
+  }, [filter, photos]);
   useEffect(() => {
     if (filter.length > 0) return;
     const observer = new IntersectionObserver(OnIntersection)
-    if (observer && elementRef.current) { observer.observe(elementRef.current); loadMorePhotos(); }
+    if (observer && elementRef.current) { observer.observe(elementRef.current);  }
     return () => {
       if (observer) observer.disconnect();
     }
@@ -60,10 +68,7 @@ export const ListPhotos = () => {
   }
   useEffect(() => {
     if (filter) {
-      const filteredElems = photos.filter(photo =>
-        photo.title.toLowerCase().includes(filter.toLowerCase()) || photo.author.toLowerCase().includes(filter.toLowerCase())
-      );
-      setShowPhotos(filteredElems);
+      fetchUpdate();
     }
     else setShowPhotos(photos)
   }, [filter]);

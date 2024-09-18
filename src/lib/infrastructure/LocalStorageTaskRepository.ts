@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { PhotoRepository } from "../domain/PhotoRepository";
 import { Photo } from "../domain/Photo";
+import { useAppSelector } from "../../store";
 const images = [
     {
         "type": "Image",
@@ -395,6 +396,7 @@ const images = [
 ]
 const ITEMS_PER_PAGE = 2;
 export const createLocalStorageTaskRepository = (): PhotoRepository => {
+
     localStorage.setItem('photos', JSON.stringify(images))
 
     return {
@@ -420,17 +422,18 @@ export const createLocalStorageTaskRepository = (): PhotoRepository => {
             }
             return Promise.resolve();
         },
-        search: (id: number) => {
+        search: (text: string) => {
             const tasks = localStorage.getItem('photos');
             const parsedTasks = tasks ? JSON.parse(tasks) as Photo[] : [];
-            const photoExist = parsedTasks.findIndex((t) => t.id == id);
-            //Actualizacion
-            if (photoExist !== -1) {
-                parsedTasks[photoExist] = { ...parsedTasks[photoExist], likes_count: parsedTasks[photoExist].likes_count++ };
-                localStorage.setItem("photos", JSON.stringify(parsedTasks));
+            let filteredElems: Photo[] = []
+            if (text) {
+                filteredElems = parsedTasks.filter(photo =>
+                    photo.title.toLowerCase().includes(text.toLowerCase()) || photo.author.toLowerCase().includes(text.toLowerCase())
+                );
+                //Crear el registro, si no existe en el array
+
             }
-            //Crear el registro, si no existe en el array
-            return Promise.resolve(parsedTasks[photoExist]);
-        },
+            return Promise.resolve(filteredElems || []);
+        }
     }
 }
