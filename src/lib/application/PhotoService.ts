@@ -2,7 +2,7 @@ import { PhotoRepository } from "../domain/PhotoRepository";
 
 
 export const createPhotoService = (repository:PhotoRepository)=>({
-    getAll: async () => await repository.getAll(),
+    getAll: async (page:number) => await repository.getAll(page),
     like: async (id: number) => {
         // ensureTaskIdIsValid(id);
         // ensureTaskTitleIsValid(title);

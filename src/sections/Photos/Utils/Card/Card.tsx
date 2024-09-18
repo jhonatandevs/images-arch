@@ -14,7 +14,6 @@ const Card = (props: any) => {
         dispatch(toggleFavorite(props?.image));
     }
     useEffect(() => {
-
     }, [props]);
     return (
         <div className="relative flex w-full  h-[24rem] flex-col  bg-white bg-clip-border text-gray-700 shadow-md  mx-auto max-w-72 min-w-60 transition-transform duration-500 ease-in-out hover:scale-105   ">

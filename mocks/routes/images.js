@@ -1,4 +1,4 @@
-const IMAGES = [
+let IMAGES = [
     {
       "type": "Image",
       "id": 2,
@@ -390,7 +390,7 @@ const IMAGES = [
       ]
     }
 ]
-
+const ITEMS_PER_PAGE=4;
 module.exports = [
   {
     id: "get-images", // id of the route
@@ -398,11 +398,24 @@ module.exports = [
     method: "GET", // HTTP method
     variants: [
       {
-        id: "success", // id of the variant
-        response: {
-          status: 200, // status to send
-          body: IMAGES, // body to send
-        },
+        id: "success", // id de la variante
+        response: (req, res) => {
+          const { search, page } = req.query; // obtenemos el query param 'search' de la petición
+  
+          let filteredImages = IMAGES; // inicialmente todas las imágenes
+  
+          // Si el parámetro search está presente, filtramos las imágenes
+          if (search) {
+            filteredImages = IMAGES.filter(image => 
+              image.title.toLowerCase().includes(search.toLowerCase()) ||
+              image.author.toLowerCase().includes(search.toLowerCase())
+            );
+          }
+          if (page && !search) {
+            filteredImages = filteredImages.slice(Number(page)*ITEMS_PER_PAGE,(Number(page)+1)*ITEMS_PER_PAGE);
+          }
+          res.status(200).json(filteredImages||[]); // devolvemos el array de imágenes filtradas
+        }
       },
       {
         id: "error", // id of the variant
@@ -423,9 +436,18 @@ module.exports = [
     variants: [
       {
         id: "success",
-        response: {
-          status: 204
-        }
+        response: (req, res) => {
+          const { id } = req.params; // obtenemos el id de la URL
+          const image = IMAGES.find(image => image.id === parseInt(id, 10)); // filtramos la imagen con ese id
+    
+          if (image) {
+            // Actualizamos el número de likes (puedes cambiar esta lógica si es necesario)
+            image.likes_count = (image.likes_count || 0) + 1;
+            res.status(204).send(); // devolvemos un status 204, sin contenido
+          } else {
+            res.status(404).json({ error: "Image not found" }); // devolvemos un 404 si la imagen no existe
+          }
+        },
       },
       {
         id: "error", // id of the variant
