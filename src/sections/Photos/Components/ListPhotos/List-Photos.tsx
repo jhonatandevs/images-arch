@@ -1,11 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import Card from "../Utils/Card/Card"
-import { Photo } from "../../../lib/domain/Photo";
-import { useAppSelector } from "../../../store";
-import { sharedService } from "../../../lib/shared/sharedService";
-
-
-
+import Card from "../../Utils/Card/Card"
+import { Photo } from "../../../../lib/domain/Photo";
+import { useAppSelector } from "../../../../store";
+import { sharedService } from "../../../../lib/shared/sharedService";
 
 export const ListPhotos = () => {
   const [photos, setPhotos] = useState<Photo[]>([]);
@@ -49,14 +46,7 @@ export const ListPhotos = () => {
       setShowPhotos(photos); // Si no hay filtro, muestra todas las fotos
     }
   }, [filter, photos]);
-  useEffect(() => {
-    if (filter.length > 0) return;
-    const observer = new IntersectionObserver(OnIntersection)
-    if (observer && elementRef.current) { observer.observe(elementRef.current);  }
-    return () => {
-      if (observer) observer.disconnect();
-    }
-  }, [photos, showPhotos]);
+
   const loadMorePhotos = () => {
     if (!loading && hasMore) {
       setPage((prevPage) => prevPage + 1); // Incrementa la página en 1
@@ -67,11 +57,18 @@ export const ListPhotos = () => {
     if (firstEntry.isIntersecting && hasMore && filter.length == 0) fetchTasks(page);
   }
   useEffect(() => {
-    if (filter) {
-      fetchUpdate();
+    if (filter.length > 0) {
+      fetchUpdate(); // Si hay filtro, actualiza las fotos filtradas
+    } else {
+      setShowPhotos(photos); // Si no hay filtro, muestra todas las fotos
+      if (elementRef.current) {
+        const observer = new IntersectionObserver(OnIntersection);
+        observer.observe(elementRef.current);
+        return () => observer.disconnect(); // Limpia el observador al desmontar el componente
+      }
     }
-    else setShowPhotos(photos)
-  }, [filter]);
+  }, [filter, photos]);
+  
   return (
     <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-5 bg-white dark:bg-slate-600 min-h-4016'>
       {showPhotos.map((image, index) => {

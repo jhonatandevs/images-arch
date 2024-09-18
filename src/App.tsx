@@ -1,5 +1,5 @@
 import { BrowserRouter, useRoutes } from 'react-router-dom';
-import { ListPhotos } from './sections/Photos/Components/List-Photos';
+import { ListPhotos } from './sections/Photos/Components/ListPhotos/List-Photos';
 import { Navbar } from './sections/Photos/Utils/Navbar';
 import { Providers } from './store/Providers';
 import { LazyFooter } from './sections/Photos/Utils/Footer/LazyFooter';
