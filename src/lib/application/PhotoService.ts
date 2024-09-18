@@ -1,20 +1,15 @@
-// import { ensureTaskIdIsValid, ensureTaskTitleIsValid } from "../domain/Task";
-// import { TaskRepository } from "../domain/TaskRepository";
+import { PhotoRepository } from "../domain/PhotoRepository";
 
-// export const createTaskService = (repository:TaskRepository)=>({
-//     getAll: async () => await repository.getAll(),
-//     save: async (id: string, title: string, isDone: boolean) => {
-//         ensureTaskIdIsValid(id);
-//         ensureTaskTitleIsValid(title);
-//         await repository.save({
-//             id,
-//             title,
-//             isDone,
-//             createAt: new Date()
-//         })
-//     },
-//     delete: async (id: string) => {
-//         ensureTaskIdIsValid(id);
-//         await repository.delete(id);
-//     }
-// })
+
+export const createPhotoService = (repository:PhotoRepository)=>({
+    getAll: async () => await repository.getAll(),
+    like: async (id: number) => {
+        // ensureTaskIdIsValid(id);
+        // ensureTaskTitleIsValid(title);
+        await repository.like(id)
+    },
+    search: async (id: number) => {
+        // ensureTaskIdIsValid(id);
+        await repository.search(id);
+    }
+})
