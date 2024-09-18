@@ -8,7 +8,7 @@ const MiddleFooter = React.lazy(
 )
 export function LazyFooter() {
     const elementRef = useRef(null);
-    const isNearScreen = useNearScreen(elementRef, '100px');
+    const isNearScreen = useNearScreen(elementRef, '50px');
     return <div className="" ref={elementRef}>
        <Suspense fallback={'Estoy cargando'}>
        {isNearScreen ? <MiddleFooter /> : null}

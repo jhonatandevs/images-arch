@@ -68,7 +68,7 @@ export const ListPhotos = () => {
     else setShowPhotos(photos)
   }, [filter]);
   return (
-    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-5 bg-white dark:bg-slate-600 min-h-96'>
+    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-5 bg-white dark:bg-slate-600 min-h-4016'>
       {showPhotos.map((image, index) => {
         return (
           <Card key={index} image={image} />

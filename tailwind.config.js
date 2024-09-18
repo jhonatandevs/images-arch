@@ -6,7 +6,11 @@ module.exports = {
     fontSize: {
       '2xs': '0.6rem',
     },
-    extend: {},
+    extend: {
+      minHeight: {
+        '4016': '40rem',
+      },
+    },
   },
   plugins: []
 }
