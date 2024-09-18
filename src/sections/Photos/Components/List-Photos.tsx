@@ -4,6 +4,7 @@ import { createFetchPhotoRepository } from "../../../lib/infrastructure/FetchTas
 import Card from "../Utils/Card/Card"
 import { Photo } from "../../../lib/domain/Photo";
 import { createLocalStorageTaskRepository } from "../../../lib/infrastructure/LocalStorageTaskRepository";
+import { useAppSelector } from "../../../store";
 
 
 // const images=[
@@ -405,11 +406,14 @@ const service = createPhotoService(repository);
 
 export const ListPhotos = () => {
   const [photos, setPhotos]=useState<Photo[]>([]);
+  const [showPhotos, setShowPhotos]=useState<Photo[]>([]);
+  const filter = useAppSelector(state => state.photos.filter);
+
   const fetchTasks = () => {
     service.getAll()
         .then((photos) => {
-          setPhotos(photos)
-           console.log("PHOTOS --  REPOSITORY:  ",photos)
+         setPhotos(photos)
+         setShowPhotos(photos)
         })
         .catch((error) => console.error(error)
         )
@@ -419,11 +423,17 @@ useEffect(() => {
  
 }, []);
 useEffect(() => {
-  
-}, [photos]);
+  if (filter) {
+    const filteredElems = photos.filter(photo =>
+      photo.title.toLowerCase().includes(filter.toLowerCase())
+    );
+    setShowPhotos(filteredElems);
+  }
+  else setShowPhotos(photos)
+}, [filter]);
   return (
     <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-5 bg-white dark:bg-slate-600'>
-        {photos.map((image,index)=>{
+        {showPhotos.map((image,index)=>{
             return(
               <Card key={index} image={image}/>
             )

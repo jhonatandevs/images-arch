@@ -4,9 +4,11 @@ import { Photo } from '../../lib/domain/Photo';
 
 interface PhotosState{
   favorites: { [key: string]: Photo },
+  filter:string
 }
 const initialState:PhotosState = {
   favorites: {},
+  filter:''
 }
 
 const PhotoSlice = createSlice({
@@ -15,6 +17,10 @@ const PhotoSlice = createSlice({
   reducers: {
     setFavoritePhotos( state, action: PayloadAction<{ [key: string]: Photo }> ) {
       state.favorites = action.payload;
+    },
+    setFilterPhotos(state, action: PayloadAction<string>){
+      state.filter=action.payload
+      
     },
 
     toggleFavorite( state, action: PayloadAction<Photo> ) {
@@ -37,6 +43,6 @@ const PhotoSlice = createSlice({
   }
 });
 
-export const {setFavoritePhotos,toggleFavorite} = PhotoSlice.actions
+export const {setFavoritePhotos,toggleFavorite,setFilterPhotos} = PhotoSlice.actions
 
 export default PhotoSlice.reducer
