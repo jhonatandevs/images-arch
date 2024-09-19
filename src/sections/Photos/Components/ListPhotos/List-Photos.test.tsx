@@ -10,94 +10,131 @@ import { createFetchPhotoRepository } from "../../../../lib/infrastructure/Fetch
 import { Provider } from 'react-redux';
 import { store } from '../../../../store';
 import { ListPhotos } from './List-Photos';
+import { sharedService } from '../../../../lib/shared/sharedService';
+import fetchMock from 'jest-fetch-mock';
 
-jest.mock('../path/to/your/repository');
+fetchMock.enableMocks();
 
-describe('ListPhotos Component', () => {
-    const repository = createFetchPhotoRepository();
+const imagesMock = [
+    {
+        "type": "Image",
+        "id": 2,
+        "title": "Grey beach",
+        "price": 43,
+        "author": "Mary Robinette",
+        "created_at": "2012-12-12T21: 08: 20Z",
+        "main_attachment": {
+            "big": "https://picsum.photos/id/100/600",
+            "small": "https://picsum.photos/id/100/300"
+        },
+        "likes_count": 1,
+        "liked": false,
+        "links": [
+            {
+                "rel": "avatar",
+                "uri": "http://lorempixel.com/250/250/",
+                "methods": "GET"
+            },
+            {
+                "rel": "like",
+                "uri": "http://localhost:3100/images/2/likes",
+                "methods": "POST"
+            }
+        ]
+    },
+    {
+        "type": "Image",
+        "id": 3,
+        "title": "A castle",
+        "price": 45,
+        "author": "Aliette de Bodard",
+        "created_at": "2012-12-12T21: 08: 20Z",
+        "main_attachment": {
+            "big": "https://picsum.photos/id/101/600",
+            "small": "https://picsum.photos/id/101/300"
+        },
+        "likes_count": 2,
+        "liked": true,
+        "links": [
+            {
+                "rel": "avatar",
+                "uri": "http://lorempixel.com/250/250/",
+                "methods": "GET"
+            },
+            {
+                "rel": "like",
+                "uri": "http://localhost:3100/images/3/likes",
+                "methods": "POST"
+            }
+        ]
+    },
+    {
+        "type": "Image",
+        "id": 4,
+        "title": "Red fruits",
+        "price": 30,
+        "author": "SamyRoad",
+        "created_at": "2012-12-12T21: 08: 20Z",
+        "main_attachment": {
+            "big": "https://picsum.photos/id/102/600",
+            "small": "https://picsum.photos/id/102/300"
+        },
+        "likes_count": 7,
+        "liked": true,
+        "links": [
+            {
+                "rel": "avatar",
+                "uri": "http://lorempixel.com/250/250/",
+                "methods": "GET"
+            },
+            {
+                "rel": "like",
+                "uri": "http://localhost:3100/images/4/likes",
+                "methods": "POST"
+            }
+        ]
+    },
+    {
+        "type": "Image",
+        "id": 5,
+        "title": "Feet don't fail me",
+        "price": 12,
+        "author": "Djeli Clark",
+        "created_at": "2012-12-12T21: 08: 20Z",
+        "main_attachment": {
+            "big": "https://picsum.photos/id/103/600",
+            "small": "https://picsum.photos/id/103/300"
+        },
+        "likes_count": 8,
+        "liked": false,
+        "links": [
+            {
+                "rel": "avatar",
+                "uri": "http://lorempixel.com/250/250/",
+                "methods": "GET"
+            },
+            {
+                "rel": "like",
+                "uri": "http://localhost:3100/images/5/likes",
+                "methods": "POST"
+            }
+        ]
+    }
+]
+describe('Repository fetch getAll', () =>{
+    beforeEach(() => {
+        fetchMock.resetMocks();
+      });
+      test("getAll",async ()=>{
+        fetchMock.mockResponseOnce(JSON.stringify(imagesMock));
+        const result = await sharedService.getAll(0);
+        expect(result).toEqual(imagesMock);
+       })
+       test("getAll url",async ()=>{
+        fetchMock.mockResponseOnce(JSON.stringify(imagesMock));
+        await sharedService.getAll(0);
+        expect(fetchMock).toHaveBeenCalledWith('http://localhost:3100/images?page=0');
+       })
+}
 
-    let mockRepository :PhotoRepository
-
-  beforeEach(() => {
-    mockRepository = {
-      getAll: jest.fn(),
-      search: jest.fn(),
-      like: jest.fn(),
-    };
-    (createFetchPhotoRepository as jest.Mock).mockReturnValue(mockRepository);
-  });
-
-  it('should load and display photos correctly', async () => {
-    const mockPhotos = [
-      { id: 1, url: 'photo1.jpg', likes: 5 },
-      { id: 2, url: 'photo2.jpg', likes: 3 }
-    ];
-
-    mockRepository.getAll(0);
-
-    render(
-      <Provider store={store}>
-        <ListPhotos />
-      </Provider>
-    );
-
-    expect(mockRepository.getAll).toHaveBeenCalledWith(0); // Verifica que se carguen fotos al inicio
-
-    // Espera a que se rendericen las fotos
-    await waitFor(() => {
-      const images = screen.getAllByRole('img');
-      expect(images.length).toBe(2);
-    });
-  });
-
-  it('should load more photos on scroll', async () => {
-    const mockPhotosPage1 = [{ id: 1, url: 'photo1.jpg', likes: 5 }];
-    const mockPhotosPage2 = [{ id: 2, url: 'photo2.jpg', likes: 3 }];
-
-    // Simula la primera carga de fotos
-    mockRepository.getAll(3);
-    render(
-      <Provider store={store}>
-        <ListPhotos />
-      </Provider>
-    );
-
-    // Espera a que se cargue la primera página
-    await waitFor(() => {
-      const images = screen.getAllByRole('img');
-      expect(images.length).toBe(1);
-    });
-
-//     // Simula la segunda carga de fotos (scroll)
-//     mockRepository.getAll.mockResolvedValueOnce(mockPhotosPage2);
-
-//     fireEvent.scroll(window, { target: { scrollingElement: { scrollHeight: 1000, scrollTop: 900 } } });
-
-//     await waitFor(() => {
-//       const images = screen.getAllByRole('img');
-//       expect(images.length).toBe(2);
-//     });
-//   });
-
-//   it('should filter photos when a filter is applied', async () => {
-//     const mockFilteredPhotos = [{ id: 3, url: 'filteredPhoto.jpg', likes: 8 }];
-
-//     mockRepository.search.mockResolvedValueOnce(mockFilteredPhotos);
-
-//     // Simula la aplicación de un filtro
-//     render(
-//       <Provider store={store}>
-//         <ListPhotos />
-//       </Provider>
-//     );
-
-//     fireEvent.change(screen.getByRole('textbox'), { target: { value: 'landscape' } });
-
-//     await waitFor(() => {
-//       const images = screen.getAllByRole('img');
-//       expect(images.length).toBe(1);
-//       expect(images[0]).toHaveAttribute('src', 'filteredPhoto.jpg');
-//     });
-//   });
-});
-})
+)
